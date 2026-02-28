@@ -993,6 +993,47 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
             docker_runner_register
             ;;
         
+        # ./runner.sh pxe [cleanup]
+        pxe)
+            shift
+            
+            if [[ "${1:-}" == "cleanup" ]]; then
+                shell_info "Running PXE cleanup..."
+                PXE_DIR="$(dirname "$0")/pxe-setup"
+                sudo "$PXE_DIR/cleanup.sh"
+                shell_info "PXE cleanup completed."
+                exit 0
+            fi
+
+            # 自动检测网络接口
+            HOST_IFACE=$(ip route | grep default | awk '{print $5}')
+            if [ -z "$HOST_IFACE" ]; then
+                shell_die "Cannot detect host network interface!"
+            fi
+
+            export NETWORK_INTERFACE="$HOST_IFACE"
+            export DHCP_INTERFACE="$HOST_IFACE"
+            shell_info "Detected host network interface: $NETWORK_INTERFACE"
+
+            PXE_DIR="$(dirname "$0")/pxe-setup"
+
+            # 检查是否有 root 权限
+            if [[ $EUID -ne 0 ]]; then
+                shell_warn "PXE setup requires root privileges. Attempting to use sudo..."
+                shell_info "Running PXE initialization..."
+                sudo -E "$PXE_DIR/setup_env.sh"
+                sudo -E "$PXE_DIR/configure_pxe.sh"
+            else
+                shell_info "Running PXE initialization..."
+                "$PXE_DIR/setup_env.sh"
+                "$PXE_DIR/configure_pxe.sh"
+            fi
+
+            shell_info "PXE initialization completed."
+            shell_info "Use './runner.sh pxe cleanup' to remove PXE configuration."
+            exit 0
+            ;;
+
         # ./runner.sh compose
         compose)
             cont_count=0
