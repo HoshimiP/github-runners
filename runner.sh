@@ -995,12 +995,10 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
         
         # ./runner.sh pxe [cleanup]
         pxe)
-            shift
-            
             if [[ "${1:-}" == "cleanup" ]]; then
                 shell_info "Running PXE cleanup..."
-                PXE_DIR="$(dirname "$0")/pxe-setup"
-                sudo "$PXE_DIR/cleanup.sh"
+                PXE_DIR="$(cd "$(dirname "$0")/pxe-setup" && pwd)"
+                sudo bash "$PXE_DIR/cleanup.sh"
                 shell_info "PXE cleanup completed."
                 exit 0
             fi
@@ -1015,18 +1013,18 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
             export DHCP_INTERFACE="$HOST_IFACE"
             shell_info "Detected host network interface: $NETWORK_INTERFACE"
 
-            PXE_DIR="$(dirname "$0")/pxe-setup"
+            PXE_DIR="$(cd "$(dirname "$0")/pxe-setup" && pwd)"
 
             # 检查是否有 root 权限
             if [[ $EUID -ne 0 ]]; then
                 shell_warn "PXE setup requires root privileges. Attempting to use sudo..."
                 shell_info "Running PXE initialization..."
-                sudo -E "$PXE_DIR/setup_env.sh"
-                sudo -E "$PXE_DIR/configure_pxe.sh"
+                sudo -E bash "$PXE_DIR/setup_env.sh"
+                sudo -E bash "$PXE_DIR/configure_pxe.sh"
             else
                 shell_info "Running PXE initialization..."
-                "$PXE_DIR/setup_env.sh"
-                "$PXE_DIR/configure_pxe.sh"
+                bash "$PXE_DIR/setup_env.sh"
+                bash "$PXE_DIR/configure_pxe.sh"
             fi
 
             shell_info "PXE initialization completed."
