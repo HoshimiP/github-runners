@@ -11,6 +11,9 @@ cleanup() {
     shell_info "Removing dnsmasq configuration..."
     rm -f /etc/dnsmasq.d/pxe.conf
     
+    shell_info "Removing tap interface if exists..."
+    ip link delete tap-runner-pxe 2>/dev/null || true
+
     # 清理 TFTP 根目录
     # rm -rf "$TFTP_ROOT" 2>/dev/null || true
 }

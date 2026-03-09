@@ -59,7 +59,6 @@ EOF
 
     chmod 644 "$IPXE_SCRIPT"
     shell_info "iPXE boot script created: $IPXE_SCRIPT"
-    shell_info ""
     shell_info "iPXE boot script content (modify as needed):"
     cat "$IPXE_SCRIPT"
 }

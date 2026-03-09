@@ -10,6 +10,19 @@ check_interface() {
     fi
 }
 
+set_tap_interface() {
+    if [ "$QEMU" = "true" ]; then
+        if ! ip link show tap-runner-pxe > /dev/null 2>&1; then
+            shell_info "Creating tap-runner-pxe interface for QEMU..."
+            ip tuntap add dev tap-runner-pxe mode tap user "$(whoami)"
+            ip link set tap-runner-pxe up
+            shell_info "tap-runner-pxe interface created and set up."
+        else
+            shell_info "tap-runner-pxe interface already exists."
+        fi
+    fi
+}
+
 install_dependencies() {
     shell_info "Updating package list..."
     apt-get update
@@ -33,4 +46,5 @@ setup_tftp_root() {
 shell_info "Running setup_env..."
 install_dependencies
 setup_tftp_root
+set_tap_interface
 shell_info "setup_env finished."

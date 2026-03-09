@@ -1002,11 +1002,15 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
                 shell_info "PXE cleanup completed."
                 exit 0
             fi
-
-            # 自动检测网络接口
-            HOST_IFACE=$(ip route | grep default | awk '{print $5}')
-            if [ -z "$HOST_IFACE" ]; then
-                shell_die "Cannot detect host network interface!"
+            if [[ "${1:-}" == "qemu" ]]; then
+                export QEMU="true"
+                HOST_IFACE="tap-runner-pxe"
+            else
+                # 自动检测网络接口
+                HOST_IFACE=$(ip route | grep default | awk '{print $5}')
+                if [ -z "$HOST_IFACE" ]; then
+                    shell_die "Cannot detect host network interface!"
+                fi
             fi
 
             export NETWORK_INTERFACE="$HOST_IFACE"

@@ -22,3 +22,6 @@ DHCP_LEASE_TIME="${DHCP_LEASE_TIME:-12h}"
 # TFTP 配置
 TFTP_ROOT="${TFTP_ROOT:-/var/lib/tftpboot}"
 IPXE_SCRIPT="${IPXE_SCRIPT:-$TFTP_ROOT/boot.ipxe}"
+
+# 是否加载内核到 QEMU 中进行测试
+QEMU="${QEMU:-false}"
