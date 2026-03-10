@@ -16,6 +16,7 @@ set_tap_interface() {
             shell_info "Creating tap-runner-pxe interface for QEMU..."
             ip tuntap add dev tap-runner-pxe mode tap user "$(whoami)"
             ip link set tap-runner-pxe up
+            ip addr add "$PXE_SERVER_IP"/24 dev tap-runner-pxe
             shell_info "tap-runner-pxe interface created and set up."
         else
             shell_info "tap-runner-pxe interface already exists."

@@ -993,7 +993,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
             docker_runner_register
             ;;
         
-        # ./runner.sh pxe [cleanup]
+        # ./runner.sh pxe [cleanup | qemu]
         pxe)
             if [[ "${1:-}" == "cleanup" ]]; then
                 shell_info "Running PXE cleanup..."
